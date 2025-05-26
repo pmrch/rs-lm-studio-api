@@ -6,6 +6,8 @@ use super::{ Model, Message };
 pub struct Request {
     pub model: Model,
     pub messages: Vec<Message>,
+    #[serde(skip)]
+    pub context: bool,
     pub temperature: f32,
     pub max_tokens: i32,
     pub stream: bool,
@@ -16,6 +18,7 @@ impl ::std::default::Default for Request {
         Self {
             model: Model::Custom("".into()),
             messages: vec![],
+            context: true,
             temperature: 0.7,
             max_tokens: 4090,
             stream: false

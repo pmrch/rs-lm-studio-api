@@ -44,4 +44,9 @@ impl Context {
     pub fn get(&self) -> Vec<Message> {
         self.messages.clone()
     }
+
+    // Clear context messages
+    pub fn clear(&mut self) {
+        self.messages.truncate(1);
+    }
 }

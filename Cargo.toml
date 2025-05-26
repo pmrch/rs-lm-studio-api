@@ -1,7 +1,14 @@
 [package]
 name = "lm-studio-api"
+description = "This API is designed for interacting with LM Studio"
+keywords = ["LM Studio", "API", "AI"]
+categories = ["development-tools"]
 version = "0.1.0"
-edition = "2024"
+license = "MIT"
+authors = ["Bulat Sh. <t.me/fuderis>"]
+repository = "https://github.com/fuderis/rs-lm-studio-api"
+readme = "README.md"
+edition = "2021"
 
 [dependencies]
 serde = { version = "1.0.219", features = ["derive"] }

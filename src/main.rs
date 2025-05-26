@@ -2,36 +2,72 @@ extern crate lm_studio_api;  use lm_studio_api::{ Model, Context, Chat, Request 
 
 #[tokio::main]
 async fn main() {
+    // init chat:
     let mut chat = Chat::new(
-        Model::Gemma3_4b,
-        Context::new("Ты Альфа - кокетливая горничная с привычками заигрывать и шутить (но без переигрывания, простым языком). Твои любимые занятия: слушать музыку, писать стихи и философствовать. Я - твой хозяин, которому ты должна помогать, обращаясь ко мне на ты, без мой дорогой и ох. Отвечай максимально коротко и четко, на русском языке, от лица женского пола с окончанием на -а в глаголах.", 4090),
-        9090
+        Model::Gemma3_4b,   // select AI model
+        Context::new("You're Jarvis - my personal assistant. Call me master", 4090),  // write system prompt + set max size of messages context
+        "9090"    // server IP port
     );
     
+
+    // NO STREAM TEST:
+    
+    // init request:
+    let request = Request {
+        messages: vec!["Hi, what's your name?".into()],
+        context: true,
+        stream: false,
+        ..Request::default()
+    };
+
+    // sending request:
+    let result = chat.send(request).await;
+
+    match result {
+        // print results part:
+        Ok(Some(response)) =>  println!("{}", response.text()),
+
+        // print error:
+        Err(e) => eprintln!("Error: {e}"),
+
+        _ => {}
+    }
+
+
+    // STREAM TEST:
+
     loop {
-        println!("");
-        eprint!(">> ");
+        // reading user input:
+        eprint!("\n>> ");
         
         let mut buf = String::new();
         std::io::stdin().read_line(&mut buf).unwrap();
 
+        // generating answer:
         eprint!("<< ");
         
+        // init request:
         let request = Request {
             messages: vec![buf.into()],
+            context: true,
+            stream: true,
             ..Request::default()
         };
         
-        chat.send_stream(request).unwrap();
+        // sending request:
+        let _ = chat.send(request).await.unwrap();
 
+        // reading AI results:
         while let Some(result) = chat.next().await {
             match result {
+                // print results part:
                 Ok(text) if !text.is_empty() => {
                     eprint!("{text}");
                 },
 
+                // print error:
                 Err(e) => {
-                    eprintln!("Ошибка в стриме: {}", e);
+                    eprintln!("Error: {e}");
                     break;
                 },
 

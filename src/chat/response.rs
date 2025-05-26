@@ -15,6 +15,13 @@ pub struct Response {
     pub system_fingerprint: String,
 }
 
+impl Response {
+    // Get reponse text
+    pub fn text(&self) -> &str {
+        &self.choices[0].message.content
+    }
+}
+
 
 use futures::StreamExt;
 use tokio_stream::wrappers::UnboundedReceiverStream;
@@ -24,15 +31,17 @@ use tokio_stream::wrappers::UnboundedReceiverStream;
 pub struct ResponseReader {
     pub receiver: UnboundedReceiverStream<std::result::Result<StreamChoice, reqwest::Error>>,
     pub message: Message,
-    pub is_ready: bool
+    pub is_ready: bool,
+    pub context: bool
 }
 
 impl ResponseReader {
-    pub fn new(receiver: UnboundedReceiverStream<std::result::Result<StreamChoice, reqwest::Error>>) -> Self {
+    pub fn new(receiver: UnboundedReceiverStream<std::result::Result<StreamChoice, reqwest::Error>>, context: bool) -> Self {
         Self {
             receiver,
             message: Message { role: Role::Assistant, content: str!("") },
-            is_ready: false
+            is_ready: false,
+            context
         }
     }
 
