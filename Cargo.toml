@@ -1,7 +1,7 @@
 [package]
 name = "lm-studio-api"
 description = "This API is designed for interacting with LM Studio"
-keywords = ["LM Studio", "API", "AI"]
+keywords = ["LM-Studio", "LMStudio", "API", "AI"]
 categories = ["development-tools"]
 version = "0.1.0"
 license = "MIT"
