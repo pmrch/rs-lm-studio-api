@@ -21,6 +21,11 @@ pub enum Model {
     Gemma3_27b,
 
     // TODO: to add more models..
+    #[serde(rename = "mythomax-l2-kimiko-v2-13b")]
+    Kimiko13b,
+
+    #[serde(rename = "meta-llama-3.1-8b-instruct")]
+    Llama3_1_8b,
     
     // custom:
     #[from]

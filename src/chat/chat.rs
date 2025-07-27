@@ -6,6 +6,7 @@ use futures_util::StreamExt;
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::UnboundedReceiverStream;
 
+
 // The LM Studio chat
 pub struct Chat {
     model: Model,
