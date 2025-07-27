@@ -15,3 +15,7 @@ pub mod input;            pub use input::Input;
 
 // Embedding response structure, representing the result returned by the embedding API
 pub mod embed_response;   pub use embed_response::EmbeddingResponse;
+
+pub mod embed_data;       pub use embed_data::EmbeddingData;
+
+pub mod embed_usage;      pub use embed_usage::EmbeddingUsage;

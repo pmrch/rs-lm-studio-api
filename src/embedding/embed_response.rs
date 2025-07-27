@@ -4,7 +4,7 @@ use crate::prelude::*;
 
 // The response to an embedding request, 
 // including the vector and its metadata
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct EmbeddingResponse {
     // Type of object returned (e.g., "embedding"). Useful for 
     //distinguishing response types.
