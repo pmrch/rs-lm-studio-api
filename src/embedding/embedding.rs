@@ -1,23 +1,23 @@
-// This module contains the main embedding logic and API client for LM Studio's embedding endpoint.
-// It provides the structures and methods for sending requests and receiving embedding vectors.
+/// This module contains the main embedding logic and API client for LM Studio's embedding endpoint.
+/// It provides the structures and methods for sending requests and receiving embedding vectors.
 use crate::prelude::*;
 use super::*;
 
 use reqwest::{Client};
 
 
-// Embedding client for LM Studio API
+/// Embedding client for LM Studio API
 pub struct Embedding {
-    // API endpoint URL for embedding requests
+    /// API endpoint URL for embedding requests
     pub url: String,
 
-    // HTTP client used to send requests
+    /// HTTP client used to send requests
     pub client: Client
 }
 
 impl Embedding {
-    // Create a new Embedding client for a given port. 
-    //This sets up the endpoint and HTTP client.
+    /// Create a new Embedding client for a given port. 
+    /// This sets up the endpoint and HTTP client.
     pub fn new(url: Option<String>) -> 
     Self 
     {
@@ -34,17 +34,28 @@ impl Embedding {
         }
     }
 
-    // Send an embedding request and return the response from the API.
-    // This method serializes the request, sends it, and parses the response.
-    pub async fn send(&mut self, req: EmbeddingRequest) -> Result<EmbeddingResponse> {
+    /// Send an embedding request and return the response from the API.
+    /// This method serializes the request, sends it, and parses the response.
+    pub async fn send(&mut self, req: EmbeddingRequest) -> Result<EmbeddingData> {
         let resp = self.client.post(&self.url)
             .json(&req)
             .send()
             .await?
             .error_for_status()?
-            .json::<EmbeddingResponse>()
-            .await?;        
+            .json()
+            .await?;
 
         Ok(resp)
+    }
+
+    /// Send an embedding request and return the response from the API.
+    /// This method uses the send() method, and returns the actual embedding vector
+    pub async fn embed(&mut self, req: EmbeddingRequest) -> Result<Vec<f32>> {
+        let resp = self.send(req).await?;
+        let embed = resp.data.get(0)
+            .ok_or_else(|| anyhow::anyhow!("No embeddings returned"))?
+            .actual_embedding();
+
+        Ok(embed)
     }
 }

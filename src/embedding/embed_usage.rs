@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-// Response usage info
+/// Response usage info
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EmbeddingUsage {
     pub prompt_tokens: u32,

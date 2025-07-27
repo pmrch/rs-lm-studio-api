@@ -1,4 +1,4 @@
-extern crate lm_studio_api;  use lm_studio_api::{ Model, Context, Chat, Request };
+extern crate lm_studio_api_extended;  use lm_studio_api_extended::{ Model, Context, Chat, Request };
 
 #[tokio::main]
 async fn main() {
