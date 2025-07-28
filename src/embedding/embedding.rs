@@ -3,8 +3,23 @@
 use crate::prelude::*;
 use super::*;
 
+use anyhow::Ok;
 use reqwest::{Client};
 
+#[derive(Debug)]
+pub enum EmbeddingResult {
+    Single(Vec<f32>),
+    Multi(Vec<Vec<f32>>)
+}
+
+impl EmbeddingResult {
+    pub fn len(&self) -> usize {
+        match self {
+            EmbeddingResult::Single(v) => v.len(),
+            EmbeddingResult::Multi(vv) => vv.len()
+        }
+    }
+}
 
 /// Embedding client for LM Studio API
 pub struct Embedding {
@@ -36,7 +51,7 @@ impl Embedding {
 
     /// Send an embedding request and return the response from the API.
     /// This method serializes the request, sends it, and parses the response.
-    pub async fn send(&mut self, req: EmbeddingRequest) -> Result<EmbeddingData> {
+    pub async fn send(&mut self, req: EmbeddingRequest) -> anyhow::Result<EmbeddingData> {
         let resp = self.client.post(&self.url)
             .json(&req)
             .send()
@@ -50,12 +65,37 @@ impl Embedding {
 
     /// Send an embedding request and return the response from the API.
     /// This method uses the send() method, and returns the actual embedding vector
-    pub async fn embed(&mut self, req: EmbeddingRequest) -> Result<Vec<f32>> {
-        let resp = self.send(req).await?;
-        let embed = resp.data.get(0)
-            .ok_or_else(|| anyhow::anyhow!("No embeddings returned"))?
-            .actual_embedding();
-
-        Ok(embed)
+    pub async fn embed(&mut self, req: EmbeddingRequest) -> anyhow::Result<EmbeddingResult> {
+        if !self.is_batch(req.clone()).await? {
+            let embedding = self.single_embed(req).await?;
+            Ok(EmbeddingResult::Single(embedding))
+        } else {
+            let embeddings = self.batch_embed(req).await?;
+            Ok(EmbeddingResult::Multi(embeddings))
+        }
     }
+
+    async fn single_embed(&mut self, req: EmbeddingRequest) -> anyhow::Result<Vec<f32>> {
+        let resp = self.send(req).await?;
+        let result = resp.data[0].actual_embedding();
+
+        Ok(result)
+    }
+
+    async fn batch_embed(&mut self, req: EmbeddingRequest) -> anyhow::Result<Vec<Vec<f32>>> {
+        let resp = self.send(req).await?;
+        let mut multi_embed: Vec<Vec<f32>> = Vec::new();
+
+        for embed in resp.data {
+            let actual_embed = embed.embedding;
+            multi_embed.push(actual_embed);
+        }
+
+        Ok(multi_embed)
+    }
+
+    async fn is_batch(&mut self, req: EmbeddingRequest) -> anyhow::Result<bool> {
+        Ok(self.send(req).await?.data.len() > 1)
+    }
+
 }

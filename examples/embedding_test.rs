@@ -11,5 +11,5 @@ async fn main() {
 
     let res = embedder.embed(req).await.unwrap();
     println!("Embedding: {:?}", res);
-    println!("Length of embedding: {}", res.len());
+    //println!("Length of embedding: {}", res.len());
 }
