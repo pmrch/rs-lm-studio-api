@@ -22,6 +22,15 @@ impl Context {
         }
     }
 
+    // Adds context from RAG to system prompt
+    pub fn edit<S>(&mut self, modification: S)
+    where 
+        S: Into<String>
+    {
+        let sysprompt_extra = format!("\n\nContext: [\n\t{}]", modification.into());
+        self.messages[0].content.push_str(&sysprompt_extra);
+    }
+
     // Add a message to context
     pub fn add<M>(&mut self, message: M)
     where
