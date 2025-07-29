@@ -32,6 +32,12 @@ impl Chat {
         }
     }
 
+    // Allows you to change the default url of any instance
+    // of the Chat struct
+    pub fn change_url(&mut self, url: &str) {
+        self.url = url.to_string();
+    }
+
     // Send request to chat
     pub async fn send(&mut self, mut request: Request) -> Result<Option<Response>> {
         // add request to context:

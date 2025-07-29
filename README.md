@@ -30,7 +30,7 @@ completions (streaming or not), and now... generate embeddings as well!
 Add it to your `Cargo.toml`:
 
 ```toml
-lm-studio-api-extended = "0.1.0"
+lm-studio-api-extended = "0.1.2"
 ```
 
 ## Examples
@@ -52,3 +52,6 @@ See LICENSE for details.
 
 You can contact the original creator via GitHub or send a message to their Telegram [@fuderis](https://t.me/fuderis).  
 This library is constantly evolving, and they welcome your suggestions and feedback.
+
+## Versions:
+**See CHANGELOG.md for version history.**
